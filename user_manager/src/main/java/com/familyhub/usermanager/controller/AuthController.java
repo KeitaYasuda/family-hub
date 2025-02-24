@@ -14,7 +14,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final AuthService authService;
+    // 定数の定義
+    private static String USERNAME = "username";
+    private static String PASSWORD = "password";
+
+    private AuthService authService;
 
     @Autowired
     public AuthController(AuthService authService) {
@@ -26,8 +30,8 @@ public class AuthController {
     public ResponseEntity<?> register(@RequestBody Map<String, String> req) {
         try {
             User user = authService.register(
-                    req.get("username"),
-                    req.get("password"),
+                    req.get(USERNAME),
+                    req.get(PASSWORD),
                     req.get("email")
             );
             return ResponseEntity.ok("User registered: " + user.getUsername());
@@ -40,7 +44,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> req) {
         try {
-            String token = authService.login(req.get("username"), req.get("password"));
+            String token = authService.login(req.get(USERNAME), req.get(PASSWORD));
             Map<String, String> res = new HashMap<>();
             res.put("accessToken", token);
             return ResponseEntity.ok(res);
@@ -57,7 +61,7 @@ public class AuthController {
                                  .body("User not authenticated");
         }
         Map<String, Object> info = new HashMap<>();
-        info.put("username", authentication.getName());
+        info.put(USERNAME, authentication.getName());
         info.put("authorities", authentication.getAuthorities());
         return ResponseEntity.ok(info);
     }
